@@ -8,16 +8,19 @@ angular.module('RDash').config(['$stateProvider', '$urlRouterProvider',
 
         // For unmatched routes
         $urlRouterProvider.otherwise('/');
-
         // Application routes
         $stateProvider
             .state('index', {
                 url: '/',
                 templateUrl: 'templates/dashboard.html'
             })
-            .state('tables', {
-                url: '/tables',
-                templateUrl: 'templates/tables.html'
+            .state('project', {
+                url: '/project',
+                templateUrl: 'templates/project.html'
+            })
+            .state('customer', {
+                url: '/customer',
+                templateUrl: 'templates/customer.html'
             });
     }
 ]);

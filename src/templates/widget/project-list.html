@@ -28,7 +28,7 @@
 		<td ng-if="project.project_type == 1">{{ project.price}} {{ project.currency }}</td>
 		<td ng-if="project.project_type == 2">{{ project.hourly_rate }} * {{ project.work_hour }}</td>
 		<td ng-if="project.project_type == 1">{{ project.price}} {{ project.currency }}</td>
-		<td ng-if="project.project_type == 2">{{ project.hourly_rate * project.work_hour }}</td>
+		<td ng-if="project.project_type == 2">{{ project.hourly_rate * project.work_hour }} {{ project.currency }}</td>
 		<td>{{ project.rate }}</td>
 		<td>{{ project.comment }}</td>
 		<td ng-if="project.finished == 1"><a href="javascript:;" ng-click="add_hour(project._id, project.work_hour)" class="btn btn-xs blue pr_table_buttons" ng-if="project.project_type == 2">+ hours</a><a href="javascript:;" class="btn btn-xs green pr_table_buttons" ng-click="finish_project(project._id)">Finish</a></td>
@@ -50,15 +50,19 @@
       	<h4>Project Link</h4>
       	<input type="text" id="pr_link_holder" class="form-control"/>
       	<h4>Project Type</h4>
-      	<select class="form-contorl" id="pr_type_holder"><option value="1">Fixed</option><option value="2">Hourly</option></select>
+      	<select class="form-contorl" id="pr_type_holder" onchange="javascript:change_project_type()"><option value="1">Fixed</option><option value="2">Hourly</option></select>
       	<h4>Client</h4>
       	<input type="text" class="form-control" id="client_holder"/>
       	<h4>Start Date</h4>
       	<input type="text" class="form-control" id="st_date_holder"/>
-      	<h4>Budget</h4>
-      	<input type="text" class="form-control" id="budget_holder" value="0"/>
-      	<h4>Hourl Rate</h4>
-      	<input type="text" class="form-control" id="h_rate_holder" value="0"/>
+      	<div class="show_on_type1">
+	      	<h4>Budget</h4>
+	      	<input type="text" class="form-control" id="budget_holder" value="0"/>
+      	</div>
+      	<div class="show_on_type2" style="display:none;">
+	      	<h4>Hourl Rate</h4>
+	      	<input type="text" class="form-control" id="h_rate_holder" value="0"/>
+      	</div>
       	<h4>Currency</h4>
       	<input type="text" class="form-control" id="currency_holder" value="USD"/>
       	<h4></h4>

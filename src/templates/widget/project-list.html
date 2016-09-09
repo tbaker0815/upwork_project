@@ -25,16 +25,69 @@
 		<td>{{ project.customer }}</td>
 		<td>{{ project.start_date }}</td>
 		<td>{{ project.end_date }}</td>
-		<td ng-if="project.project_type == 1">{{ project.price}} {{ project.currency }}</td>
-		<td ng-if="project.project_type == 2">{{ project.hourly_rate }} * {{ project.work_hour }}</td>
-		<td ng-if="project.project_type == 1">{{ project.price}} {{ project.currency }}</td>
-		<td ng-if="project.project_type == 2">{{ project.hourly_rate * project.work_hour }} {{ project.currency }}</td>
+		<td ng-if="project.project_type == 1">{{ project.price}} USD</td>
+		<td ng-if="project.project_type == 2">{{ project.hourly_rate }} * {{ project.work_hour }} USD</td>
+		<td ng-if="project.project_type == 1">{{ project.price}} USD</td>
+		<td ng-if="project.project_type == 2">{{ project.hourly_rate * project.work_hour }} USD</td>
 		<td>{{ project.rate }}</td>
 		<td>{{ project.comment }}</td>
 		<td ng-if="project.finished == 1"><a href="javascript:;" ng-click="add_hour(project._id, project.work_hour)" class="btn btn-xs blue pr_table_buttons" ng-if="project.project_type == 2">+ hours</a><a href="javascript:;" class="btn btn-xs green pr_table_buttons" ng-click="finish_project(project._id)">Finish</a></td>
 		<td ng-if="project.finished == 0"><span class="label label-success">Finished</span></td>
 	</tr>
 </table>
+<div>
+	<h3>Overall Status</h3>
+	<div class="col-md-12">
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Earning
+			</div>
+			<div class="col-md-6">
+			{{overall_earning}} USD
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Work Hour
+			</div>
+			<div class="col-md-6">
+			{{overall_w_hour}} h
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Earning from Fixed Project
+			</div>
+			<div class="col-md-6">
+			{{fixed_earning}} USD
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Earning from Hourly Project
+			</div>
+			<div class="col-md-6">
+			{{hourly_earning}} USD
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Rating
+			</div>
+			<div class="col-md-6">
+			{{overall_rate | number : 3}}
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="col-md-6">
+			Overall Hourly Rating
+			</div>
+			<div class="col-md-6">
+			{{overall_h_rate}} USD
+			</div>
+		</div>
+	</div>
+</div>
 <div id="pr_info_modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -46,26 +99,23 @@
       </div>
       <div class="modal-body">
       	<h4>Project Name</h4>
-      	<input type="text" id="pr_name_holder" class="form-control"/>
+      	<input type="text" id="pr_name_holder" class="form-control" ng-model="pr_name"/>
       	<h4>Project Link</h4>
-      	<input type="text" id="pr_link_holder" class="form-control"/>
+      	<input type="text" id="pr_link_holder" class="form-control" ng-model="p_link"/>
       	<h4>Project Type</h4>
-      	<select class="form-contorl" id="pr_type_holder" onchange="javascript:change_project_type()"><option value="1">Fixed</option><option value="2">Hourly</option></select>
+      	<select class="form-contorl" id="pr_type_holder" ng-model="pr_type" ng-value="pr_type"><option value="1">Fixed</option><option value="2">Hourly</option></select>
       	<h4>Client</h4>
-      	<input type="text" class="form-control" id="client_holder"/>
+      	<input type="text" class="form-control" id="client_holder" ng-model="client"/>
       	<h4>Start Date</h4>
-      	<input type="text" class="form-control" id="st_date_holder"/>
-      	<div class="show_on_type1">
+      	<input type="text" class="form-control" id="st_date_holder" ng-model="st_date"/>
+      	<div ng-if="pr_type == 1">
 	      	<h4>Budget</h4>
-	      	<input type="text" class="form-control" id="budget_holder" value="0"/>
+	      	<input type="text" class="form-control" id="budget_holder" ng-model="bg"/>
       	</div>
-      	<div class="show_on_type2" style="display:none;">
+      	<div ng-if="pr_type == 2">
 	      	<h4>Hourl Rate</h4>
-	      	<input type="text" class="form-control" id="h_rate_holder" value="0"/>
+	      	<input type="text" class="form-control" id="h_rate_holder" ng-model="hrate" />
       	</div>
-      	<h4>Currency</h4>
-      	<input type="text" class="form-control" id="currency_holder" value="USD"/>
-      	<h4></h4>
       </div>
       <div class="modal-footer">
       	<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="createProject()">Save</button>

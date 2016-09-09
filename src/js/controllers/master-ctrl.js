@@ -10,7 +10,14 @@ function MasterCtrl($scope, $cookieStore, $location, $http) {
      * Sidebar Toggle & Cookie Control
      */
     var mobileView = 992;
-
+    $scope.pr_name = "";
+    $scope.pr_type = 1;
+    $scope.client = "";
+    $scope.st_date = "";
+    $scope.bg = 0;
+    $scope.hrate = 0;
+    $scope.currency = "USD";
+    $scope.p_link = "";
     $scope.getWidth = function() {
         return window.innerWidth;
     };
@@ -42,6 +49,7 @@ function MasterCtrl($scope, $cookieStore, $location, $http) {
     .then(function(resp){
         projects = JSON.parse(resp.data)
         $scope.pr_list = projects;
+        $scope.calOverall();
     },function(error){
     });
 
@@ -54,8 +62,10 @@ function MasterCtrl($scope, $cookieStore, $location, $http) {
             data : {'pr_id': pr_id, 'w_h': w_h, 'a_h': hour, 'psw': psw}
         })
         .then(function(resp){
-            if(resp.data.msg != 'error')
+            if(resp.data.msg != 'error'){
                 $scope.pr_list = JSON.parse(resp.data)
+                $scope.calOverall();
+            }
         },function(error){
             console.log(error);
         });
@@ -72,8 +82,10 @@ function MasterCtrl($scope, $cookieStore, $location, $http) {
                 data : {'pr_id': pr_id, 'psw': psw, 'rate':rate, 'comment': comment, 'ed_date': ed_date}
             })
             .then(function(resp){
-                if(resp.data.msg != 'error')
-                    $scope.pr_list = JSON.parse(resp.data)
+                if(resp.data.msg != 'error'){
+                    $scope.pr_list = JSON.parse(resp.data);
+                    $scope.calOverall();
+                }
             },function(error){
                 console.log(error);
             });
@@ -81,27 +93,53 @@ function MasterCtrl($scope, $cookieStore, $location, $http) {
     $scope.createProject = function(){
         if(confirm("Do you wanna create project?"))
         {
+            console.log($scope.pr_type);
             psw = prompt("Please insert password");
-            pr_name = $("#pr_name_holder").val();
-            pr_type = $("#pr_type_holder").val();
-            client = $("#client_holder").val();
-            st_date = $("#st_date_holder").val();
-            bg = $("#budget_holder").val();
-            hrate = $("#h_rate_holder").val();
-            currency = $("#currency_holder").val();
-            p_link = $("#pr_link_holder").val();
             $http({
                 method : 'POST',
                 url : 'http://127.0.0.1:5000/createProject',
-                data : {'psw':psw, 'p_name': pr_name, 'p_type': pr_type, 'clt': client, 'st_date': st_date, 'bg': bg, 'h_rate': hrate, 'currency': currency,'p_link':p_link}
+                data : {'psw':psw, 'p_name': $scope.pr_name, 'p_type': $scope.$scope.pr_type, 'clt': $scope.client, 'st_date': $scope.st_date, 'bg': $scope.bg, 'h_rate': $scope.hrate, 'currency': $scope.currency,'p_link':$scope.p_link}
             })
             .then(function(resp){
                 console.log(resp.data)
-                if(resp.data.msg != 'error')
+                if(resp.data.msg != 'error'){
                     $scope.pr_list = JSON.parse(resp.data)
+                    $scope.calOverall();
+                    $scope.pr_name = "";
+                    $scope.pr_type = 1;
+                    $scope.client = "";
+                    $scope.st_date = "";
+                    $scope.bg = 0;
+                    $scope.hrate = 0;
+                    $scope.currency = "USD";
+                    $scope.p_link = "";
+                }
             },function(error){
                 console.log(error);
             });
         }
+    }
+    $scope.calOverall = function(){
+        t_rating = 0;
+        t_f_earning = 0;
+        t_h_earning = 0;
+        t_h_hour = 0;
+        t_earning = 0;
+        for(i=0;i<$scope.pr_list.length;i++){
+            if($scope.pr_list[i].project_type==1){
+                t_rating += parseInt($scope.pr_list[i].rate * $scope.pr_list[i].price);
+                t_f_earning += parseInt($scope.pr_list[i].price);
+            }else{
+                t_rating += parseInt($scope.pr_list[i].rate * $scope.pr_list[i].hourly_rate * $scope.pr_list[i].work_hour);
+                t_h_earning += parseInt($scope.pr_list[i].hourly_rate * $scope.pr_list[i].work_hour);
+                t_h_hour += parseInt($scope.pr_list[i].work_hour);
+            }
+        }
+        $scope.overall_earning = t_h_earning + t_f_earning;
+        $scope.fixed_earning = t_f_earning;
+        $scope.hourly_earning = t_h_earning;
+        $scope.overall_rate = t_rating / (t_h_earning + t_f_earning);
+        $scope.overall_h_rate = t_h_earning / t_h_hour;
+        $scope.overall_w_hour = t_h_hour;
     }
 }
